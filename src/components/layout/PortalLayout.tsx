@@ -12,18 +12,24 @@ import {
   ListItemIcon,
   ListItemText,
   Toolbar,
+  Tooltip,
   Typography,
   useTheme,
-  Zoom,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import SchoolIcon from "@mui/icons-material/School";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import MilitaryTechIcon from "@mui/icons-material/MilitaryTech";
-import LogoutIcon from "@mui/icons-material/Logout";
-import SettingsIcon from "@mui/icons-material/Settings";
 import HistoryIcon from "@mui/icons-material/History";
+import LogoutIcon from "@mui/icons-material/Logout";
+import GroupIcon from "@mui/icons-material/Group";
+import QuizIcon from "@mui/icons-material/Quiz";
+import MonitorIcon from "@mui/icons-material/Monitor";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import BusinessIcon from "@mui/icons-material/Business";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { usePortal } from "@/hooks/usePortal";
 
@@ -44,15 +50,27 @@ function PortalLayout() {
     navigate("/");
   };
 
-  const navItems = [
+  const isAdmin = currentUser?.role === "ADMIN" || currentUser?.role === "SUPER_ADMIN";
+
+  const employeeNavItems = [
     { text: "Dashboard", icon: <DashboardIcon />, path: "/dashboard" },
     { text: "My Exams", icon: <AssessmentIcon />, path: "/exam/instructions" },
     { text: "Certificates", icon: <MilitaryTechIcon />, path: "/certificate" },
     { text: "History", icon: <HistoryIcon />, path: "/history" },
-    ...(currentUser?.role !== "EMPLOYEE"
-      ? [{ text: "Admin Panel", icon: <SettingsIcon />, path: "/admin/dashboard" }]
-      : []),
   ];
+
+  const adminNavItems = [
+    { text: "Dashboard", icon: <AdminPanelSettingsIcon />, path: "/admin/dashboard" },
+    { text: "Companies", icon: <BusinessIcon />, path: "/admin/companies" },
+    { text: "Users", icon: <GroupIcon />, path: "/admin/users" },
+    { text: "Question Bank", icon: <QuizIcon />, path: "/admin/question-bank" },
+    { text: "Exams", icon: <AssessmentIcon />, path: "/admin/exams" },
+    { text: "Live Monitor", icon: <MonitorIcon />, path: "/admin/live-monitoring" },
+    { text: "Results", icon: <CheckCircleIcon />, path: "/admin/results" },
+    { text: "Reports", icon: <BarChartIcon />, path: "/admin/reports" },
+  ];
+
+  const navItems = isAdmin ? adminNavItems : employeeNavItems;
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "background.default" }}>
@@ -181,42 +199,43 @@ function PortalLayout() {
             {navItems.map((item) => {
               const active = location.pathname.startsWith(item.path);
               return (
-                <ListItemButton
-                  key={item.text}
-                  onClick={() => navigate(item.path)}
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: sidebarCollapsed ? "center" : "initial",
-                    px: 2.5,
-                    mb: 1,
-                    borderRadius: 2,
-                    bgcolor: active ? "primary.50" : "transparent",
-                    color: active ? "primary.main" : "text.secondary",
-                    "&:hover": { bgcolor: active ? "primary.50" : "grey.50" },
-                  }}
-                >
-                  <ListItemIcon
+                <Tooltip key={item.text} title={sidebarCollapsed ? item.text : ""} placement="right">
+                  <ListItemButton
+                    onClick={() => navigate(item.path)}
                     sx={{
-                      minWidth: 0,
-                      mr: sidebarCollapsed ? 0 : 2,
-                      justifyContent: "center",
-                      color: active ? "primary.main" : "inherit",
+                      minHeight: 48,
+                      justifyContent: sidebarCollapsed ? "center" : "initial",
+                      px: 2.5,
+                      mb: 1,
+                      borderRadius: 2,
+                      bgcolor: active ? "primary.50" : "transparent",
+                      color: active ? "primary.main" : "text.secondary",
+                      "&:hover": { bgcolor: active ? "primary.50" : "grey.50" },
                     }}
                   >
-                    {item.icon}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={item.text}
-                    sx={{
-                      opacity: sidebarCollapsed ? 0 : 1,
-                      display: sidebarCollapsed ? "none" : "block",
-                      "& .MuiListItemText-primary": {
-                        fontWeight: active ? 600 : 500,
-                        fontSize: "0.95rem",
-                      },
-                    }}
-                  />
-                </ListItemButton>
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: sidebarCollapsed ? 0 : 2,
+                        justifyContent: "center",
+                        color: active ? "primary.main" : "inherit",
+                      }}
+                    >
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={item.text}
+                      sx={{
+                        opacity: sidebarCollapsed ? 0 : 1,
+                        display: sidebarCollapsed ? "none" : "block",
+                        "& .MuiListItemText-primary": {
+                          fontWeight: active ? 600 : 500,
+                          fontSize: "0.95rem",
+                        },
+                      }}
+                    />
+                  </ListItemButton>
+                </Tooltip>
               );
             })}
           </List>
@@ -265,7 +284,7 @@ function PortalLayout() {
         sx={{
           flexGrow: 1,
           pt: 8,
-          height: "100vh",
+          minHeight: "100vh",
           overflow: "auto",
           display: "flex",
           flexDirection: "column",

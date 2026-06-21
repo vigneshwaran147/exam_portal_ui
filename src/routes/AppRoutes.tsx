@@ -12,9 +12,12 @@ import CertificatePage from "@/pages/Certificate/CertificatePage";
 import HistoryPage from "@/pages/History/HistoryPage";
 import AdminDashboardPage from "@/pages/Admin/AdminDashboardPage";
 import UserManagementPage from "@/pages/Admin/UserManagementPage";
+import CompanyManagementPage from "@/pages/Admin/CompanyManagementPage";
 import QuestionBankPage from "@/pages/Admin/QuestionBankPage";
 import ExamManagementPage from "@/pages/Admin/ExamManagementPage";
 import LiveMonitoringPage from "@/pages/Admin/LiveMonitoringPage";
+import ResultsPage from "@/pages/Admin/ResultsPage";
+import ReportsPage from "@/pages/Admin/ReportsPage";
 import NotFoundPage from "@/pages/NotFound/NotFoundPage";
 
 function AppRoutes() {
@@ -34,10 +37,13 @@ function AppRoutes() {
 
           <Route element={<RequireRole allowed={["ADMIN", "SUPER_ADMIN"]} />}>
             <Route path="admin/dashboard" element={<AdminDashboardPage />} />
+            <Route path="admin/companies" element={<CompanyManagementPage />} />
             <Route path="admin/users" element={<UserManagementPage />} />
             <Route path="admin/question-bank" element={<QuestionBankPage />} />
             <Route path="admin/exams" element={<ExamManagementPage />} />
             <Route path="admin/live-monitoring" element={<LiveMonitoringPage />} />
+            <Route path="admin/results" element={<ResultsPage />} />
+            <Route path="admin/reports" element={<ReportsPage />} />
           </Route>
         </Route>
       </Route>

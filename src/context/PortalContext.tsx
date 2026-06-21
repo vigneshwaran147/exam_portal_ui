@@ -1,6 +1,6 @@
 import { createContext, useMemo, useState } from "react";
-import { mockExams, mockUsers } from "@/data/mockPortalData";
-import type { UserRole } from "@/types/auth";
+import { mockCompanies, mockExams, mockUsers } from "@/data/mockPortalData";
+import type { Company, UserRole } from "@/types/auth";
 import type { Exam, ExamQuestion, ExamResult, UserAnswerValue } from "@/types/exam";
 import type {
   ExamSession,
@@ -46,6 +46,7 @@ type StoredState = Pick<PortalState, "currentUser" | "activeSession" | "results"
 
 function getInitialState(): PortalState {
   const defaultState: PortalState = {
+    companies: mockCompanies,
     users: mockUsers,
     currentUser: null,
     exams: mockExams,
@@ -435,6 +436,9 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
       id: crypto.randomUUID(),
       examId: exam.id,
       userId: state.currentUser.id,
+      employeeId: state.currentUser.id,
+      level: exam.level,
+      answers: state.activeSession.answers,
       score,
       totalMarks: exam.totalMarks,
       percentage,
@@ -475,6 +479,9 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
       id: crypto.randomUUID(),
       examId: exam.id,
       userId: state.currentUser.id,
+      employeeId: state.currentUser.id,
+      level: exam.level,
+      answers: state.activeSession.answers,
       score: 0,
       totalMarks: exam.totalMarks,
       percentage: 0,
@@ -503,6 +510,34 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
     return result;
   };
 
+  const addCompany = (company: Omit<Company, "id" | "createdAt">) => {
+    const newCompany: Company = {
+      ...company,
+      id: `COMP${Date.now()}`,
+      createdAt: new Date().toISOString().split("T")[0],
+    };
+    setState((prev) => ({ ...prev, companies: [...prev.companies, newCompany] }));
+  };
+
+  const updateCompany = (id: string, updates: Partial<Company>) => {
+    setState((prev) => ({
+      ...prev,
+      companies: prev.companies.map((c) => (c.id === id ? { ...c, ...updates } : c)),
+    }));
+  };
+
+  const addEmployee = (employee: Omit<import("@/types/auth").UserProfile, "id">) => {
+    const newEmployee = { ...employee, id: `EMP${Date.now()}` };
+    setState((prev) => ({ ...prev, users: [...prev.users, newEmployee] }));
+  };
+
+  const updateEmployee = (id: string, updates: Partial<import("@/types/auth").UserProfile>) => {
+    setState((prev) => ({
+      ...prev,
+      users: prev.users.map((u) => (u.id === id ? { ...u, ...updates } : u)),
+    }));
+  };
+
   const value = useMemo<PortalContextValue>(
     () => ({
       ...state,
@@ -523,7 +558,11 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
       forceFailActiveExam,
       getExamById,
       getActiveExam,
-      getQuestionById
+      getQuestionById,
+      addCompany,
+      updateCompany,
+      addEmployee,
+      updateEmployee,
     }),
     [state]
   );

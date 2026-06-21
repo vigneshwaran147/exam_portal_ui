@@ -35,6 +35,9 @@ export type ExamResult = {
   id: string;
   examId: string;
   userId: string;
+  employeeId?: string;
+  level?: 0 | 1 | 2;
+  answers?: Record<string, UserAnswerValue>;
   score: number;
   totalMarks: number;
   percentage: number;

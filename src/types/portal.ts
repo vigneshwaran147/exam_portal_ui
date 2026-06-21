@@ -1,4 +1,4 @@
-import type { UserProfile } from "@/types/auth";
+import type { Company, UserProfile } from "@/types/auth";
 import type { Exam, ExamQuestion, ExamResult, UserAnswerValue } from "@/types/exam";
 
 export type ProctoringStatus = {
@@ -90,6 +90,7 @@ export type ExamSession = {
 };
 
 export type PortalState = {
+  companies: Company[];
   users: UserProfile[];
   currentUser: UserProfile | null;
   exams: Exam[];
@@ -120,4 +121,8 @@ export type PortalContextValue = PortalState & {
   getExamById: (examId: string) => Exam | undefined;
   getActiveExam: () => Exam | undefined;
   getQuestionById: (exam: Exam, questionId: string) => ExamQuestion | undefined;
+  addCompany: (company: Omit<Company, "id" | "createdAt">) => void;
+  updateCompany: (id: string, updates: Partial<Company>) => void;
+  addEmployee: (employee: Omit<UserProfile, "id">) => void;
+  updateEmployee: (id: string, updates: Partial<UserProfile>) => void;
 };
